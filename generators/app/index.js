@@ -36,11 +36,11 @@ var VSCodeGenerator = yeoman.generators.Base.extend({
           name: 'Node/Express application (' + chalk.bold('TypeScript') + ')',
           value: 'expressTS'
         }
-        // ,
-        // {
-        //   name: 'ASP.NET ' + chalk.bold('5') + ' Application',
-        //   value: 'aspnet'
-        // }
+        ,
+        {
+          name: 'ASP.NET ' + chalk.bold('5') + ' Application',
+          value: 'aspnet'
+        }
       ]
     }];
 
@@ -79,15 +79,24 @@ var VSCodeGenerator = yeoman.generators.Base.extend({
         }.bind(this));
         break;
 
-      // case 'aspnet':
-      //   // generator-aspnet is installed alongside generator-code
-      //   this.composeWith('aspnet', {}, {
-      //     local: require.resolve('generator-aspnet')
-      //   });
+      case 'aspnet':
+        // generator-aspnet is installed alongside generator-code
+        try {
+          this.composeWith('aspnet', {}, {
+            global: require.resolve('generator-aspnet')
+          });
+        } catch (error) {
+          this.log(chalk.bold('generator-aspnet not installed globally using local'));
+          this.log(chalk.red('recommend   npm install -g generator-aspnet'));
+        }
 
-      //   done();
-        
-      //   break;
+        this.composeWith('aspnet', {}, {
+          local: require.resolve('generator-aspnet')
+        });
+
+        done();
+
+        break;
     }
   },
 
@@ -100,9 +109,9 @@ var VSCodeGenerator = yeoman.generators.Base.extend({
       case 'expressTS':
         this._writingExpress();
         break;
-      // case 'aspnet':
-      //   //aspnet generator will do its own writing
-      //   break;
+      case 'aspnet':
+        //aspnet generator will do its own writing
+        break;
       default:
         //unknown project type
         break;
@@ -115,15 +124,15 @@ var VSCodeGenerator = yeoman.generators.Base.extend({
       appName: this.applicationName
     };
 
-    //copy files and folders that are common to both JS and TS 
+    //copy files and folders that are common to both JS and TS
     this.sourceRoot(path.join(__dirname, '../templates/projects/expressCommon'));
 
-        
+
     // now copy app specific files and folders
     switch (this.type) {
       case 'expressJS':
         this.sourceRoot(path.join(__dirname, '../templates/projects/' + this.type));
-        
+
         this.directory(this.sourceRoot() + '/.vscode', this.applicationName + '/.vscode');
         this.template(this.sourceRoot() + '/bin/www', this.applicationName + '/bin/www', context);
         this.directory(this.sourceRoot() + '/public', this.applicationName + '/public');
@@ -140,7 +149,7 @@ var VSCodeGenerator = yeoman.generators.Base.extend({
         this.template(this.sourceRoot() + '/README.md', this.applicationName + '/README.md', context);
         this.copy(this.sourceRoot() + '/tsd.json', this.applicationName + '/tsd.json');
         this.copy(this.sourceRoot() + '/vscodequickstart.md', this.applicationName + '/vscodequickstart.md');
-        
+
         break;
 
       case 'expressTS':
@@ -167,7 +176,7 @@ var VSCodeGenerator = yeoman.generators.Base.extend({
         // unknown why we are here, get out!
         return;
     }
-    
+
     // NOTE: this.sourceRoot is set in the switch statement above
     // copy common file and folder names that have different content
 
@@ -175,33 +184,33 @@ var VSCodeGenerator = yeoman.generators.Base.extend({
 
   install: function () {
 
-      switch (this.type) {
+    switch (this.type) {
 
-        case 'expressJS':
-        // fall through
-      
-        case 'expressTS':
+      case 'expressJS':
+      // fall through
 
-          if (this.noNpmInstall) {
-            break;
-          }
+      case 'expressTS':
 
-          process.chdir(this.applicationName);
-
-          this.installDependencies({
-            bower: false,
-            npm: true
-          });
-
+        if (this.noNpmInstall) {
           break;
+        }
 
-        // case 'aspnet':
-        //   // aspnet wil do its own installation
-        //   break;
+        process.chdir(this.applicationName);
 
-        default:
-          break;
-      }
+        this.installDependencies({
+          bower: false,
+          npm: true
+        });
+
+        break;
+
+      case 'aspnet':
+        // aspnet wil do its own installation
+        break;
+
+      default:
+        break;
+    }
   },
 
   end: function () {
@@ -233,9 +242,9 @@ var VSCodeGenerator = yeoman.generators.Base.extend({
 
         break;
 
-      // case 'aspnet':
-      //   // aspnet wil handle its end
-      //   break;
+      case 'aspnet':
+        // aspnet wil handle its end
+        break;
 
       default:
         break;
