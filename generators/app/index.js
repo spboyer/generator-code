@@ -88,11 +88,11 @@ var VSCodeGenerator = yeoman.generators.Base.extend({
         } catch (error) {
           this.log(chalk.bold('generator-aspnet not installed globally using local'));
           this.log(chalk.red('recommend   npm install -g generator-aspnet'));
-        }
 
-        this.composeWith('aspnet', {}, {
-          local: require.resolve('generator-aspnet')
-        });
+          this.composeWith('aspnet', {}, {
+            local: require.resolve('generator-aspnet')
+          });
+        }
 
         done();
 
